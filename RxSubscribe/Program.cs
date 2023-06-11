@@ -1,15 +1,16 @@
 using System;
 using System.Reactive.Subjects;
+//https://www.c-sharpcorner.com/article/understanding-subject-behaviorsubject-replaysubject/
 
 class Program
 {
+    //regular subjects - data may be 'lost'
     static void Main(string[] args)
     {
         Console.WriteLine("Publish Subject");
 
         //topic of discussion / television station / publisher
         //no name. for e.g. cooking, sports
-        //just an int
         var subject = new Subject<string>();
 
         //watching - subscriber (observation)
@@ -35,17 +36,15 @@ class Program
         beSubject.Subscribe(value => {
             Console.WriteLine("Subscription received the value " + value, value);
 
-            // Subscription received B. It would not happen
-            // for an Observable or Subject by default.
+            //set up the subscriber
+            //should get first value
         });
 
+        //next values
         beSubject.OnNext("b");
-
         beSubject.OnNext("c");
-        // Subscription received C.
-
         beSubject.OnNext("d");
-        // Subscription received D.
+        
 
         beSubject.Dispose();
         //obs4.Dispose();

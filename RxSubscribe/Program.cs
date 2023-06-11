@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reactive.Subjects;
 
 class Program
@@ -6,61 +6,70 @@ class Program
     static void Main(string[] args)
     {
         Console.WriteLine("Publish Subject");
-        var subject = new Subject<int>();
 
-        var obs1 = subject.Subscribe(x => Console.WriteLine($"Obs 1: {x}"));
+        //topic of discussion / television station / publisher
+        //no name. for e.g. cooking, sports
+        //just an int
+        var subject = new Subject<string>();
 
-        subject.OnNext(1);
-        subject.OnNext(2);
+        //watching - subscriber (observation)
+        var obs1 = subject.Subscribe(x => Console.WriteLine($"Kevin: {x}"));
 
-        var obs2 = subject.Subscribe(x => Console.WriteLine($"Obs 2: {x}"));
-        subject.OnNext(3);
+        subject.OnNext("apple");
+        subject.OnNext("orange"); 
+
+        // second sunscriber
+        var obs2 = subject.Subscribe(x => Console.WriteLine($"Mei: {x}"));
+        subject.OnNext("grapefruit"); 
 
         obs1.Dispose();
         obs2.Dispose();
 
-        Console.WriteLine("Behavior Subject");
-        var behaviorSubject = new BehaviorSubject<int>(1);
+        // BehaviorSubject.
+        // 'A' is an initial value. If there is a Subscription 
+        // after it, it would immediately get the value 'A'.
 
-        var obs3 = behaviorSubject.Subscribe(x => Console.WriteLine($"Obs 1: {x}"));
-        behaviorSubject.OnNext(2);
+        //intial broadcast -- see start screen
+        var beSubject = new BehaviorSubject<string>("a");
 
-        var obs4 = behaviorSubject.Subscribe(x => Console.WriteLine($"Obs 2: {x}"));
-        behaviorSubject.OnNext(3);
-        behaviorSubject.OnCompleted();
+        beSubject.Subscribe(value => {
+            Console.WriteLine("Subscription received the value " + value, value);
 
-        obs3.Dispose();
-        obs4.Dispose();
+            // Subscription received B. It would not happen
+            // for an Observable or Subject by default.
+        });
 
-        /*
-         * Here's a simplified explanation of how a replay subject works:
-           Values are emitted: A replay subject can receive and store values over time. 
-           These values can be emitted by a data source or generated within the program.
-           Subscribers subscribe: Subscribers can subscribe to the replay subject at any time, 
-           even after values have already been emitted.
+        beSubject.OnNext("b");
 
-           Replay of past events: When a new subscriber subscribes to the replay subject, 
-           it receives all the previously emitted values in the order they were emitted. 
-           This allows late subscribers to access the entire history of events, not just the events that 
-           occur after their subscription.
+        beSubject.OnNext("c");
+        // Subscription received C.
 
-           Continuous stream: After the initial replay of past events, the replay subject continues 
-           to behave like a regular subject. It emits new values to all subscribers as they are generated
-        */
+        beSubject.OnNext("d");
+        // Subscription received D.
+
+        beSubject.Dispose();
+        //obs4.Dispose();
+
+        // replay subject
+        // like a tv program replayed
 
         Console.WriteLine("Replay Subject");
-        var replaySubject = new ReplaySubject<int>(100); //buffer size
-        replaySubject.OnNext(1);
-        replaySubject.OnNext(2);
-        replaySubject.OnNext(3);
+        var replaySubject = new ReplaySubject<string>(100); //buffer size
+        replaySubject.OnNext("episode 1");
+        replaySubject.OnNext("episode 2");
+        replaySubject.OnNext("episode 3");
 
-        var obs5 = replaySubject.Subscribe(x => Console.WriteLine($"Obs 1: {x}"));
-        replaySubject.OnNext(4);
+        //these 1st three were already played
+        var obs5 = replaySubject.Subscribe(x => Console.WriteLine($"Kevin: {x}"));
+        replaySubject.OnNext("episode 4");
 
-        var obs6 = replaySubject.Subscribe(x => Console.WriteLine($"Obs 2: {x}"));
-        replaySubject.OnNext(5);
+        var obs6 = replaySubject.Subscribe(x => Console.WriteLine($"Mei: {x}"));
+        replaySubject.OnNext("episode 5");
 
         obs5.Dispose();
         obs6.Dispose();
+
+        
+
     }
 }

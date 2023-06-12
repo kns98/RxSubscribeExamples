@@ -32,8 +32,11 @@ class Program
         // after it, it would immediately get the value 'A'.
 
         //intial broadcast -- see start screen
+
+        //ignores repeats in Behavior Subject
         var beSubject = new BehaviorSubject<string>("a");
 
+        beSubject.OnNext("a.1");
         beSubject.OnNext("a.1");
 
         var obj1 = beSubject.Subscribe(value => {

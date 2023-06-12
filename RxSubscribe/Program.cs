@@ -26,6 +26,7 @@ class Program
         obs1.Dispose();
         obs2.Dispose();
 
+        Console.WriteLine("Behavior Subject");
         // BehaviorSubject.
         // 'A' is an initial value. If there is a Subscription 
         // after it, it would immediately get the value 'A'.
@@ -33,18 +34,25 @@ class Program
         //intial broadcast -- see start screen
         var beSubject = new BehaviorSubject<string>("a");
 
-        beSubject.Subscribe(value => {
-            Console.WriteLine("Subscription received the value " + value, value);
+        beSubject.OnNext("a.1");
 
+        var obj1 = beSubject.Subscribe(value => {
+            Console.WriteLine("Receiver 1: " + value, value);
             //set up the subscriber
-            //should get first value
+            //should get first value onwards
+        });
+
+        var obj2 = beSubject.Subscribe(value => {
+            Console.WriteLine("Receiver 2: " + value, value);
+            //set up the subscriber
+            //should get first value onwards
         });
 
         //next values
         beSubject.OnNext("b");
         beSubject.OnNext("c");
-        beSubject.OnNext("d");
-        
+
+       
 
         beSubject.Dispose();
         //obs4.Dispose();
@@ -68,7 +76,8 @@ class Program
         obs5.Dispose();
         obs6.Dispose();
 
-        
+        obj1.Dispose();
+        obj2.Dispose();
 
     }
 }
